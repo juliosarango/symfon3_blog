@@ -1,0 +1,46 @@
+pruebas-index:
+    path: /prueba/{lang}/{nombre}/{page}
+    defaults: {_controller: AppBundle:Pruebas:index, lang:es page: 0}
+    methods: [GET,POST]
+    requirements:
+        #nombre: \s+
+        nombre: "[a-zA-Z]*"
+        page: \d+
+        lang: es|en|fr
+        
+create-method:
+    path: /create
+    defaults: { _controller:AppBundle:Pruebas:create }
+    
+read-method:
+    path: /read
+    defaults: { _controller:AppBundle:Pruebas:read }    
+    
+update-method:
+    path: /update/{id}/{titulo}/{descripcion}/{precio}
+    defaults: { _controller:AppBundle:Pruebas:update }    
+    
+delete-method:
+    path: /delete/{id}
+    defaults: { _controller:AppBundle:Pruebas:delete }     
+    
+nativeSql-method:
+    path: /nativesql
+    defaults: { _controller:AppBundle:Pruebas:nativeSql }     
+    
+dql-method:
+    path: /dql
+    defaults: { _controller:AppBundle:Pruebas:dql }   
+    
+queryBuilder-method:
+    path: /queryBuilder
+    defaults: { _controller:AppBundle:Pruebas:queryBuilder } 
+    
+form-method:
+    path: /form
+    defaults: { _controller:AppBundle:Pruebas:form }   
+    
+validarEmail-method:
+    path: /validarEmail/{email}
+    defaults: { _controller:AppBundle:Pruebas:validarEmail }     
+    

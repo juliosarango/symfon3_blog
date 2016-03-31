@@ -1,0 +1,18 @@
+{% extends "::layout.html.twig" %}
+
+{% block container %}
+    
+    {{parent()}}
+{{mensaje}} <br/>
+
+Hola {{nombre}} {{apellido}}
+
+{{ include('AppBundle:Pruebas:partial.html.twig') }}
+
+{{ generateTable(5,7) | raw }}
+
+{{ "cadena de texto" | addText }}
+
+{% endblock %}
+
+

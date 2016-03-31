@@ -1,0 +1,40 @@
+<h2>Formulario de Registro de Datos</h2>
+
+{% if (status != null) and (data != null) %}
+    <h3>{{status}}</h3>
+    {{dump(data)}}
+{% endif %}    
+
+
+
+<form action="" method="post">
+    {{ form_errors(form) }}
+    {{form_widget(form)}}
+    
+    {{form_rest(form)}}
+</form>
+
+{#{{form_start(form,{'action':'','method':'POST'})}}
+
+    {{form_errors(form)}}
+    {{form_widget(form)}}
+    {{ form_widget(form._token) }}
+{{form_end(form)}}    
+    
+<label>
+    Título:
+    {{form_widget(form.titulo)}}
+</label><br/>
+<label>
+    Descripción:
+    {{form_widget(form.descripcion)}}
+</label><br/>
+<label>
+    Precio:
+    {{form_widget(form.precio)}}
+</label><br/>
+   {{form_widget(form.Guardar)}}   
+   {{ form_rest(form) }} #}
+
+
+
