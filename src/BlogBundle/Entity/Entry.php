@@ -3,6 +3,7 @@
 namespace BlogBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * Entry
@@ -63,15 +64,24 @@ class Entry
     /**
      * @var \Category
      *
-     * @ORM\ManyToOne(targetEntity="Category")
+     * @ORM\ManyToOne(targetEntity="Category", inversedBy="entry")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="category_id", referencedColumnName="id")
      * })
      */
     private $category;
+    
+    /**
+     *
+     * @ORM\OneToMany(targetEntity="EntryTag", mappedBy="entry")
+     */
+    protected $entryTag;
+    
+    public function __construct() {
+        $this->entryTag = new ArrayCollection();
+    }
 
-
-
+    
     /**
      * Get id
      *
@@ -224,5 +234,16 @@ class Entry
     public function getCategory()
     {
         return $this->category;
+    }
+    
+    public function addEntryTag(\BlogBundle\Entity\Tag $tag)
+    {
+        $this->entryTag[] = $tag;
+        return $this;
+    }
+    
+    public function getEntryTag()
+    {
+        return $this->entryTag;
     }
 }

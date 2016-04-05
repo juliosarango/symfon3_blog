@@ -25,7 +25,7 @@ class EntryTag
     /**
      * @var \Entry
      *
-     * @ORM\ManyToOne(targetEntity="Entry")
+     * @ORM\ManyToOne(targetEntity="Entry", inversedBy="entryTag")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="entry_id", referencedColumnName="id")
      * })
@@ -35,7 +35,7 @@ class EntryTag
     /**
      * @var \Tag
      *
-     * @ORM\ManyToOne(targetEntity="Tag")
+     * @ORM\ManyToOne(targetEntity="Tag", inversedBy="entryTag")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="tag_id", referencedColumnName="id")
      * })

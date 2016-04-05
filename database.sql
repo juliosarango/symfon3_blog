@@ -57,5 +57,28 @@ constraint fk_entry_tag_tags foreign key (tag_id)
 references tag(id)
 );
 
-select * from users;
+
+insert into category(name,description) values ('Desarrollo Web','Categoria de Desarrollo Web');
+insert into category(name,description) values ('Desarrollo Android','Categoria de Desarrollo Android');
+
+insert into tag(name,description) values ('php','php tag');
+insert into tag(name,description) values ('symfony','symfony tag');
+insert into tag(name,description) values ('html','html tag');
+insert into tag(name,description) values ('zend framework 2','apuntate al curso de zend framework 2');
+
+insert into users(role, name, surname, email, password, imagen)values('admin','victor','robles','victor@victor.com','123456','')
+insert into users(role, name, surname, email, password, imagen)values('user','juan','lopez','juan@juan.com','123456','')
+
+insert into entry (user_id,category_id, title, content,status )values (1,1, 'entrada de desarrollo con php','Duis lorem semper, eu lacinia orci convallis. Vestibulum finibus massa a lacus ultricies faucibus? Donec neque libero, mattis in mollis sit amet, pulvinar vel tortor. Integer vel eros sit amet mi lacinia commodo id id tortor. Donec augue quam, convallis vitae mauris non, hendrerit volutpat ligula. Maecenas sed viverra arcu! Maecenas quis ligula luctus, aliquam enim suscipit, ultricies risus.','public');
+insert into entry (user_id,category_id, title, content,status )values (2,2, 'entrada de desarrollo con android','Duis lorem semper, eu lacinia orci convallis. Vestibulum finibus massa a lacus ultricies faucibus? Donec neque libero, mattis in mollis sit amet, pulvinar vel tortor. Integer vel eros sit amet mi lacinia commodo id id tortor. Donec augue quam, convallis vitae mauris non, hendrerit volutpat ligula. Maecenas sed viverra arcu! Maecenas quis ligula luctus, aliquam enim suscipit, ultricies risus.','public');
+insert into entry (user_id,category_id, title, content,status )values (1,1, 'Desarrollo de Webapps con symfony3','Duis lorem semper, eu lacinia orci convallis. Vestibulum finibus massa a lacus ultricies faucibus? Donec neque libero, mattis in mollis sit amet, pulvinar vel tortor. Integer vel eros sit amet mi lacinia commodo id id tortor. Donec augue quam, convallis vitae mauris non, hendrerit volutpat ligula. Maecenas sed viverra arcu! Maecenas quis ligula luctus, aliquam enim suscipit, ultricies risus.','public');
+insert into entry (user_id,category_id, title, content,status )values (1,1, 'Desarrollo de apis rest con slim','Duis lorem semper, eu lacinia orci convallis. Vestibulum finibus massa a lacus ultricies faucibus? Donec neque libero, mattis in mollis sit amet, pulvinar vel tortor. Integer vel eros sit amet mi lacinia commodo id id tortor. Donec augue quam, convallis vitae mauris non, hendrerit volutpat ligula. Maecenas sed viverra arcu! Maecenas quis ligula luctus, aliquam enim suscipit, ultricies risus.','public');
+
+insert into entry_tag (entry_id, tag_id) values (1,2);
+insert into entry_tag (entry_id, tag_id) values (1,1);
+insert into entry_tag (entry_id, tag_id) values (2,1);
+insert into entry_tag (entry_id, tag_id) values (2,3);
+insert into entry_tag (entry_id, tag_id) values (3,2);
+insert into entry_tag (entry_id, tag_id) values (1,4);
+
 

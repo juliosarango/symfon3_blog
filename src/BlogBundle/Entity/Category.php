@@ -3,6 +3,8 @@
 namespace BlogBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\ArrayCollection;
+
 
 /**
  * Category
@@ -35,9 +37,19 @@ class Category
      * @ORM\Column(name="description", type="text", nullable=true)
      */
     private $description;
+    
+    
+    /**
+     *
+     * @ORM\OneToMany(targetEntity="Entry", mappedBy="category")
+     */
+    protected $entry;
+    
+    public function __construct() {
+        $this->entry = new ArrayCollection();
+    }
 
-
-
+    
     /**
      * Get id
      *
@@ -94,5 +106,17 @@ class Category
     public function getDescription()
     {
         return $this->description;
+    }
+    
+    public function addEntry(\BlogBundle\Entity\Entry $entry)
+    {
+        $this->entry[] = $entry;
+        return $this;
+        
+    }
+    
+    public function getEntries()
+    {
+        return $this->entry;
     }
 }
