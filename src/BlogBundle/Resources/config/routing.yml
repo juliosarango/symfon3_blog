@@ -13,3 +13,27 @@ blog_homepage:
     path: /
     defaults: { _controller:BlogBundle:Default:index }
     
+blog_add_tag:
+    path: /tags/add
+    defaults: { _controller:BlogBundle:Tag:add }
+
+blog_index_tag:
+    path: /tags
+    defaults: { _controller:BlogBundle:Tag:index }  
+    
+blog_delete_tag:
+    path: /tags/delete/{id}
+    defaults: { _controller:BlogBundle:Tag:delete }     
+    
+
+blog_add_category:
+    path: /category/add
+    defaults: { _controller:BlogBundle:Category:add }
+
+blog_index_category:
+    path: /category
+    defaults: { _controller:BlogBundle:Category:index }  
+    
+blog_delete_category:
+    path: /category/delete/{id}
+    defaults: { _controller:BlogBundle:Category:delete }    

@@ -7,6 +7,7 @@
         </title>        
             {% block estilos %}
                 <link href="{{asset('bundles/blog/css/bootstrap.min.css')}}" type="text/css" rel="stylesheet"/>
+                <link href="{{asset('bundles/blog/css/font-awesome.min.css')}}" type="text/css" rel="stylesheet"/>
             {% endblock %}
     </head>
     <body>
@@ -46,6 +47,9 @@
                                         {% if app.user == null %}  
                                             <li><a href="{{path("login")}}">Entrar</a></li>
                                         {% else %}                                                                                                                                
+                                             <li><a href="{{path("blog_index_tag")}}">Etiquetas</a></li>
+                                             <li><a href="{{path("blog_index_category")}}">Categorías</a></li>
+                                             <li role="separator" class="divider"></li>
                                             <li><a href="{{path("logout")}}">Salir</a></li>
                                         {% endif %}
                                         <li><a href="#">Ayuda</a></li>

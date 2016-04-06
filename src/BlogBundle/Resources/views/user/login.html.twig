@@ -27,6 +27,16 @@
             <input type="hidden" name="_target_path" value="/login"/>
         </form>
     </div>
+            
+    <div class="col-lg-4">
+        {% for message in app.session.flashbag.get('status') %}
+            <div class="alert alert-success"> {{ message }} </div>
+        {% endfor %}    
+        <h2>Regístrate</h2>
+        <hr/>
+        {{form_start(form)}}
+        {{form_end(form)}}
+    </div>        
     <div class="clearfix"></div>
     
 {% endblock %}

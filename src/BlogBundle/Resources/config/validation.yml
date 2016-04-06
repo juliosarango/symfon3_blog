@@ -1,0 +1,10 @@
+BlogBundle\Entity\Tag:
+    properties:
+        name:
+            - Type: 
+                type: string
+                message: El nombre debe ser un {{type}}
+            - NotBlank: {message: "El nombre no puede estar vacio"}
+            - Length:
+                min: 2
+                minMessage: "La logitud mínima es 2 caracteres"
