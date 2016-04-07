@@ -1,0 +1,14 @@
+{% extends "BlogBundle::layout.html.twig" %}
+{% block content %}        
+    <div class="col col-lg-6">
+        {% for message in app.session.flashbag.get('status') %}        
+            <div class="{{message.class}}">{{message.message}}</div>
+        {% endfor %}        
+        <h2>Añadir Entradas</h2>
+        {{ form_start(form, { 'enctype':'multipart/form-data' }) }}
+
+        {{ form_end(form) }}
+    </div>    
+    <div class="clearfix"></div>
+
+{% endblock %}

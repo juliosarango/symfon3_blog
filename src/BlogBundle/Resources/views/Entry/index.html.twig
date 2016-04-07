@@ -1,0 +1,36 @@
+{% extends "BlogBundle::layout.html.twig" %}
+{% block menu %}
+    {% include "BlogBundle:Category:menu.categories.html.twig" with {'categories':categories} %}
+{% endblock %}
+
+{% block  content %}
+    
+{% for message in app.session.flashbag.get('status') %}        
+    <div class="{{message.class}}">{{message.message}}</div>
+{% endfor %}
+
+{% for entry in entries %}        
+    <div class="col col-lg-11" >
+        <p><strong>{{ entry.title }}</strong></p>
+        <p> <img width="200px" src="{{ asset("uploads/"~entry.image) }}" </p>
+        <p> {{ entry.content }} </p>
+        <p>{{ entry.category.name }}</p>
+        {% for et in entry.entryTag %}      
+            <em>{{ et.tag.name }}</em>
+            
+        {% endfor %}
+        <hr/>
+    </div>
+    <div class="clearfix"></div>
+{% endfor %}
+
+
+
+
+
+
+{% endblock %}
+
+
+
+    

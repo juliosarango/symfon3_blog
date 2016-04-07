@@ -9,7 +9,7 @@ use Doctrine\Common\Collections\ArrayCollection;
  * Entry
  *
  * @ORM\Table(name="entry", indexes={@ORM\Index(name="IDX_2B219D70A76ED395", columns={"user_id"}), @ORM\Index(name="IDX_2B219D7012469DE2", columns={"category_id"})})
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="BlogBundle\Repository\EntryRepository")
  */
 class Entry
 {

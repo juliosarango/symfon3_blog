@@ -11,17 +11,19 @@
             <tr>
                 <td>Nombre</td>
                 <td>Descripción</td>
-                <td align="center">Opciones</td>
+                <td>Editar</td>
+                <td align="center">Eliminar</td>
             </tr>
             {% for category in categories %}
                 <tr>
                     <td>{{category.name}}</td> 
                     <td>{{category.description}}</td>                    
+                    <td align="center"><a href="{{path("blog_edit_category",{"id":category.id})}}"><i class="fa fa-pencil-square-o"></i></a></td>
                     <td align="center">                         
                         {% if category.entries | length == 0 %} 
                             <a href="{{path("blog_delete_category",{"id":category.id})}}"><i class="fa fa-trash"></i></a>
                         {% else %}    
-                           <p>Categoria en uso</p>
+                           <p>En uso</p>
                         {% endif %}
                     </td>
                 </tr>

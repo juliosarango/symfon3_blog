@@ -5,10 +5,11 @@ namespace BlogBundle\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Session;
-use BlogBundle\Entity\Category;
-use BlogBundle\Form\CategoryType;
+use BlogBundle\Entity\Entry;
+use BlogBundle\Form\EntryType;
+use BlogBundle\Repository\EntryRepository;
 
-class CategoryController extends Controller {
+class EntryController extends Controller {
     
     private $session;
     
@@ -19,16 +20,19 @@ class CategoryController extends Controller {
     public function indexAction(){
         
         $em = $this->getDoctrine()->getManager();
+        $repo_entry = $em->getRepository("BlogBundle:Entry");
         $repo_category = $em->getRepository("BlogBundle:Category");
+        
+        $entries = $repo_entry->findAll();
         $categories = $repo_category->findAll();
         
-        return $this->render("BlogBundle:Category:index.html.twig", array("categories"=>$categories));
+        return $this->render("BlogBundle:Entry:index.html.twig", array("entries"=>$entries, "categories"=>$categories));
     }
     
     public function addAction(Request $request) {
         
-        $category = new Category();
-        $form = $this->createForm(CategoryType::class, $category);
+        $entry = new Entry();
+        $form = $this->createForm(EntryType::class, $entry);
 
         $form->handleRequest($request);
         $creacion = false;
@@ -39,21 +43,44 @@ class CategoryController extends Controller {
             {
                 $em = $this->getDoctrine()->getManager();
                 
-                $category->setName($form->get("name")->getData());
-                $category->setDescription($form->get("description")->getData());
+                $entry->setTitle($form->get("title")->getData());
+                $entry->setContent($form->get("content")->getData());
+                
+                $file = $form["image"]->getData();
+                $ext = $file->guessExtension();
+                $file_name = time().".".$ext;
+                $file->move("uploads",$file_name);
+                
+                $entry->setImage($file_name);
+                
+                $category_repo = $em->getRepository("BlogBundle:Category");
+                $entry_repo = $em->getRepository("BlogBundle:Entry");
+                $category = $category_repo->find($form->get("category")->getData());
                                 
-                $em->persist($category);
+                $entry->setCategory($category);
+                
+                $user = $this->getUser();
+                
+                $entry->setUser($user);
+                
+                $em->persist($entry);                                                                
                 $flush = $em->flush();
+                
+                $entry_repo->saveEntryTags(
+                        $form->get("tags")->getData(),
+                        $form->get("title")->getData(),
+                        $category,
+                        $user);
                 
                 if ($flush == null)
                 {
                     $creacion = true;
-                    $status["message"] = "Categoria creada correctamente";
+                    $status["message"] = "Entrada creada correctamente";
                     $status["class"] = "alert alert-success";
                 }
                 else
                 {
-                    $status["message"] = "La Categoría no se ha creado";
+                    $status["message"] = "La entrada no se ha creado";
                     $status["class"] = "alert alert-danger";
                 }
             }
@@ -66,11 +93,11 @@ class CategoryController extends Controller {
             $this->session->getFlashBag()->add("status", $status);
             if ($creacion)
             {
-                return $this->redirect ($this->generateUrl ("blog_index_category"));
+                return $this->redirect ($this->generateUrl ("blog_homepage"));
             }
         }                
 
-        return $this->render("BlogBundle:Category:add.html.twig", array("form" => $form->createView()));
+        return $this->render("BlogBundle:Entry:add.html.twig", array("form" => $form->createView()));
     }
     
     public function deleteAction($id){
@@ -124,9 +151,9 @@ class CategoryController extends Controller {
         if ($form->isSubmitted())
         {
             if ($form->isValid())
-            {                                
+            {
                 $categoies->setName($form->get("name")->getData());
-                $categoies->setDescription($form->get("description")->getData());
+                $categoies->setName($form->get("description")->getData());
                 
                 $em->persist($categoies);
                 $flush = $em->flush();
