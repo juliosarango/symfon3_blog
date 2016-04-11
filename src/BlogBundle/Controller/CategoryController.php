@@ -153,4 +153,32 @@ class CategoryController extends Controller {
         return $this->render("BlogBundle:Category:edit.html.twig",array("form"=>$form->createView()));
     }
     
+    public function categoryAction($id, $page)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $category_repo = $em->getRepository("BlogBundle:Category");
+        $category = $category_repo->find($id);
+        
+        $categories = $category_repo->findAll();
+        
+        $entry_repo = $em->getRepository("BlogBundle:Entry");
+        $pageSize = 5;
+        $entries = $entry_repo->getCategoryEntries($category,$pageSize, $page);       
+        
+        $totalItems = count($entries);       
+        $pageCount = ceil($totalItems/$pageSize);
+        
+        return $this->render("BlogBundle:Category:category.html.twig",
+                array(
+                    "category" => $category,
+                    "categories" => $categories,
+                    "entries" => $entries,
+                    "totalItems" => $totalItems,
+                    "pagesCount" => $pageCount,
+                    "page" => $page,
+                    "page_m" => $page
+                    ));
+        
+    }
+    
 }

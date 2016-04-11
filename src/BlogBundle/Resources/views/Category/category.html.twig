@@ -5,10 +5,6 @@
 
 {% block  content %}
     
-{% for message in app.session.flashbag.get('status') %}        
-    <div class="{{message.class}}">{{message.message}}</div>
-{% endfor %}
-
 {% for entry in entries %}        
     <div class="col col-lg-11" >
         <p><strong>{{ entry.title | upper }}</strong></p>
@@ -22,35 +18,32 @@
         <p>Escrito por: {{entry.user.name}} </p>
         {% if (app.user.id is defined) and (entry.user.id == app.user.id) %}
             <a href="{{path("blog_delete_entry",{"id":entry.id})}}" class="btn btn-danger">Eliminar Entrada</a>
-            <a href="{{path("blog_edit_entry",{"id":entry.id})}}" class="btn btn-danger">{% trans %} btn_edit {% endtrans %} </a>
+            <a href="{{path("blog_edit_entry",{"id":entry.id})}}" class="btn btn-danger">Editar Entrada</a>
         {% endif %}
         <hr/>
     </div>
     <div class="clearfix"></div>
 {% endfor %}
 
-<ul class="pagination">
-    {% if (page == 1) %}
-    {% else %}   
-        {% set page = page -1 %}
-    {% endif %}             
-    <li> <a href="{{path("blog_homepage", {"page": page })}}">&laquo; </a>
-        {% for i in 1..pagesCount %}
-            <li><a href="{{path("blog_homepage", {"page": i })}}">{{i}}</a> </li>
-        {% endfor %}
-    
-    {% if (page_m == pagesCount) %}
-    {% else %}   
-        {% set page_m = page_m +1 %}
-    {% endif %} 
-    
-    <li> <a href="{{path("blog_homepage", {"page": page_m })}}">&raquo; </a>
-</ul>
+{% if pagesCount > 0 %}
+    <ul class="pagination">        
+            {% if (page == 1) %}
+            {% else %}   
+                {% set page = page -1 %}
+            {% endif %}             
+            <li> <a href="{{path("blog_read_category", {"id":category.id,"page": page })}}">&laquo; </a>
+            {% for i in 1..pagesCount %}        
+                <li><a href="{{path("blog_read_category", {"id":category.id,"page": i })}}">{{i}}</a> </li>
+            {% endfor %}
 
+            {% if (page_m == pagesCount) %}
+            {% else %}   
+                {% set page_m = page_m +1 %}
+            {% endif %} 
 
-
-
-
+        <li> <a href="{{path("blog_read_category", {"id":category.id,"page": page_m })}}">&raquo; </a>
+    </ul>
+{% endif %}
 
 {% endblock %}
 

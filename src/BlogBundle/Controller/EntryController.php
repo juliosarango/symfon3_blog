@@ -17,16 +17,32 @@ class EntryController extends Controller {
         $this->session = new Session();
     }
     
-    public function indexAction(){
-        
+    public function indexAction(Request $request,  $page){
+                        
         $em = $this->getDoctrine()->getManager();
         $repo_entry = $em->getRepository("BlogBundle:Entry");
         $repo_category = $em->getRepository("BlogBundle:Category");
         
-        $entries = $repo_entry->findAll();
         $categories = $repo_category->findAll();
         
-        return $this->render("BlogBundle:Entry:index.html.twig", array("entries"=>$entries, "categories"=>$categories));
+        $pageSize = 5;
+        $entries = $repo_entry->getPaginateEntries($pageSize, $page);
+        
+        $totalItems = count($entries);
+        $pageCount = ceil($totalItems/$pageSize);
+        
+        
+        
+        return $this->render("BlogBundle:Entry:index.html.twig", 
+                array(
+                    "entries" => $entries, 
+                    "categories" => $categories,
+                    "totalItems" => $totalItems,
+                    "pagesCount" => $pageCount,
+                    "page" => $page,
+                    "page_m" => $page
+                
+                    ));
     }
     
     public function addAction(Request $request) {
@@ -47,11 +63,18 @@ class EntryController extends Controller {
                 $entry->setContent($form->get("content")->getData());
                 
                 $file = $form["image"]->getData();
-                $ext = $file->guessExtension();
-                $file_name = time().".".$ext;
-                $file->move("uploads",$file_name);
+                if (!empty($file) && $file != null){
+                    $ext = $file->guessExtension();
+                    $file_name = time().".".$ext;
+                    $file->move("uploads",$file_name);
+
+                    $entry->setImage($file_name);
+                }
+                else{
+                    $entry->setImage(null);
+                }
                 
-                $entry->setImage($file_name);
+                
                 
                 $category_repo = $em->getRepository("BlogBundle:Category");
                 $entry_repo = $em->getRepository("BlogBundle:Entry");
@@ -103,68 +126,121 @@ class EntryController extends Controller {
     public function deleteAction($id){
         
         $em = $this->getDoctrine()->getManager();
-        $category_repo = $em->getRepository("BlogBundle:Category");
-        $categoies = $category_repo->find($id);
+        $category_repo = $em->getRepository("BlogBundle:Entry");
+        $entry_tag_repo = $em->getRepository("BlogBundle:EntryTag");
         
-        if ($categoies != null)
-        {            
-            if (count($categoies->getEntries()) == 0)
-            {
-                $em->remove($categoies);
-                $flush = $em->flush();
+        $entry = $category_repo->find($id);
+                        
+        if ($entry != null && is_object($entry))
+        {
+            $entry_tags = $entry_tag_repo->findBy(array("entry"=>$entry));
+        
+            foreach ($entry_tags as $et){
+                if (is_object($et)){                    
+                    $em->remove($et);
+                    $em->flush();
+                }
+            }
+            
+            $em->remove($entry);
+            $flush = $em->flush();
 
-                if ($flush == null)
-                {                
-                    $status["message"] = "Categoría eliminada correctamente";
-                    $status["class"] = "alert alert-success";
-                }
-                else
-                {
-                    $status["message"] = "La Categoría no se ha eliminado";
-                    $status["class"] = "alert alert-danger";
-                }
+            if ($flush == null)
+            {                
+                $status["message"] = "Entrada eliminada correctamente";
+                $status["class"] = "alert alert-success";
             }
             else
             {
-                $status["message"] = "La Categoría está relacionada con una entrada existente, no se puede eliminar";
+                $status["message"] = "La entrada no se ha eliminado";
                 $status["class"] = "alert alert-danger";
             }
+            
         }
         else
         {
-            $status["message"] = "La Categoría no se ha encontrado";
+            $status["message"] = "La Entrada no se ha encontrado";
             $status["class"] = "alert alert-danger";
         }
         $this->session->getFlashBag()->add("status", $status);
         
-        return $this->redirect($this->generateUrl("blog_index_category"))                                     ;
+        return $this->redirect($this->generateUrl("blog_homepage"))                                     ;
     }
     
     public function editAction(Request $request, $id){
         
         $em = $this->getDoctrine()->getManager();
-        $category_repo = $em->getRepository("BlogBundle:Category");
-        $categoies = $category_repo->find($id);
+        $entry_repo = $em->getRepository("BlogBundle:Entry");
+        $entry = $entry_repo->find($id);
         
-        $form = $this->createForm(CategoryType::class, $categoies);
+        $entry_image = $entry->getImage();
+        
+        $tags = "";
+        foreach ($entry->getEntryTag() as $entryTag){
+            $tags .= $entryTag->getTag()->getName() . ",";
+        }
+            
+        
+        $form = $this->createForm(EntryType::class, $entry);
         $form->handleRequest($request);
         if ($form->isSubmitted())
         {
             if ($form->isValid())
             {
-                $categoies->setName($form->get("name")->getData());
-                $categoies->setName($form->get("description")->getData());
+                $entry->setTitle($form->get("title")->getData());
+                $entry->setContent($form->get("content")->getData());
                 
-                $em->persist($categoies);
+                $file = $form["image"]->getData();
+                
+                if (!empty($file) && $file != null){
+                    $ext = $file->guessExtension();
+                    $file_name = time().".".$ext;
+                    $file->move("uploads",$file_name);
+
+                    $entry->setImage($file_name);
+                }
+                else {
+                    $entry->setImage($entry_image);
+                }
+                
+                $category_repo = $em->getRepository("BlogBundle:Category");
+                $entry_repo = $em->getRepository("BlogBundle:Entry");
+                $category = $category_repo->find($form->get("category")->getData());
+                                
+                $entry->setCategory($category);
+                
+                $user = $this->getUser();
+                
+                $entry->setUser($user);
+                
+                $em->persist($entry);                                                                
                 $flush = $em->flush();
+                
+                $entry_tag_repo = $em->getRepository("BlogBundle:EntryTag");
+                $entry_tags = $entry_tag_repo->findBy(array("entry"=>$entry));
+        
+                foreach ($entry_tags as $et){
+                    if (is_object($et)){                    
+                        $em->remove($et);
+                        $em->flush();
+                    }
+                }
+                
+                $entry_repo->saveEntryTags(
+                        $form->get("tags")->getData(),
+                        $form->get("title")->getData(),
+                        $category,
+                        $user);
+                
                 if ($flush == null)
-                {                
-                    $status["message"] = "Categoría editada correctamente";
+                {
+                    $creacion = true;
+                    $status["message"] = "Entrada editada correctamente";
                     $status["class"] = "alert alert-success";
                 }
                 else
                 {
-                    $status["message"] = "La Categoría no se ha editado";
+                    $status["message"] = "La entrada no se ha editado";
                     $status["class"] = "alert alert-danger";
                 }                
             }
@@ -174,10 +250,10 @@ class EntryController extends Controller {
                 $status["class"] = "alert alert-danger";                
             }
             $this->session->getFlashBag()->add("status", $status);
-            return $this->redirect($this->generateUrl("blog_index_category"));
+            return $this->redirect($this->generateUrl("blog_homepage"));
         }
         
-        return $this->render("BlogBundle:Category:edit.html.twig",array("form"=>$form->createView()));
+        return $this->render("BlogBundle:Entry:edit.html.twig",array("form"=>$form->createView(), "entry"=>$entry, "tags"=>$tags));
     }
     
 }

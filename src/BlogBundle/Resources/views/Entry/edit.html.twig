@@ -1,0 +1,22 @@
+{% extends "BlogBundle::layout.html.twig" %}
+{% block content %}        
+    <div class="col col-lg-6">
+        {% for message in app.session.flashbag.get('status') %}        
+            <div class="{{message.class}}">{{message.message}}</div>
+        {% endfor %}        
+        <h2>Editar Entrada: {{ entry.title }}</h2>
+        {{ form_start(form) }}
+                
+        Imagen: 
+        <p> <img width="200px" src="{{ asset("uploads/"~entry.image) }}" </p>
+        {{ form_widget(form.image) }}
+        
+        {% set tags_clean = tags|trim(",") %}
+        <label>Etiquetas</label>
+        {{ form_widget(form.tags, {"value": tags_clean}) }}
+
+        {{ form_end(form) }}
+    </div>    
+    <div class="clearfix"></div>
+
+{% endblock %}
